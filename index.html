@@ -1570,6 +1570,7 @@
   .card-title{ text-align:center !important; }
   .proc-section, .pos-dots-title, .kp-head, .svc-title, .restr-head, .sub-heading, .proc-intro{ text-align:center !important; justify-content:center !important; }
   .arrows{ bottom:calc(104px + env(safe-area-inset-bottom, 0px)) !important; }
+  .arrows.inflow{ position:relative !important; bottom:auto !important; left:auto !important; right:auto !important; transform:none !important; margin:16px auto calc(28px + env(safe-area-inset-bottom, 0px)) !important; width:max-content; z-index:1; }
 </style>
 </head>
 <body>
@@ -3138,6 +3139,10 @@ ${c.planeImg && IMAGES[c.planeImg.key] ? '' : `<path class="hdr-dash" d="M252 74
   function render(){
     pagesEl.style.transform = `translateX(-${current * 100}%)`;
     [...tabsEl.children].forEach((t,i) => t.setAttribute('aria-current', i===current ? 'true':'false'));
+    (function(){ const ar = document.querySelector('.arrows'); if (!ar) return; if (!window.__arHome) window.__arHome = { p: ar.parentElement, n: ar.nextSibling };
+      const sec = pagesEl.children[current]; const id = screens[current].id;
+      if (id === 'cover' || !sec) { ar.classList.remove('inflow'); if (ar.parentElement !== window.__arHome.p) window.__arHome.p.insertBefore(ar, window.__arHome.n); }
+      else { ar.classList.add('inflow'); if (ar.parentElement !== sec || sec.lastElementChild !== ar) sec.appendChild(ar); } })();
     [...dotsEl.children].forEach((d,i) => d.classList.toggle('active', i===current));
     [...dotsEl.children].forEach((d,i) => d.classList.toggle('near', Math.abs(i-current)===1));
     (function(){ const a = dotsEl.children[current]; if (!a) return; const tgt = (a.offsetLeft - dotsEl.offsetLeft) + a.offsetWidth/2 - dotsEl.clientWidth/2; requestAnimationFrame(() => { try { dotsEl.scrollTo({ left: Math.max(0, tgt), behavior: 'smooth' }); } catch(e) { dotsEl.scrollLeft = Math.max(0, tgt); } }); })();
